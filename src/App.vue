@@ -1,19 +1,23 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/>
+      -->
+    <!--    <CameraTest1></CameraTest1>-->
+    <!--    <RouterLink to="/cameraTest2/1">跳转1</RouterLink>-->
+    <!--    &nbsp;-->
+    <!--    <RouterLink to="/cameraTest2/2">跳转2</RouterLink>-->
+    <RouterView></RouterView>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import CameraTest from "./components/CameraTest.vue";
+// import CameraTest1 from "@/components/CameraTest1.vue";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  components: {},
+};
 </script>
 
 <style>
