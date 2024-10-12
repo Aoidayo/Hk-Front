@@ -1,24 +1,22 @@
 # hk-front
+使用海康插件+vue接入海康的硬盘录像机，连接多路摄像头
 
-## Project setup
+目录
+```bash
+- public
+    - index.html # 引入hk插件及其余文件
+    - hkws # 存放hk文件
+- src 
+    - components
+        - HkCamera # 封装hk组件
+        - CameraTest # 连接多路摄像头，使用webctrlplugin分割窗口显示
+    - NVRconfig.js
+        # 引入硬盘录像机需要的配置
 ```
+
+使用
+```
+cd hk-front
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
