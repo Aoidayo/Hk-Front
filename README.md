@@ -9,6 +9,7 @@
 - src 
     - components
         - HkCamera # 封装hk组件
+        - TestHkLogin # 调用HkCamera
         - CameraTest # 连接多路摄像头，使用webctrlplugin分割窗口显示
     - NVRconfig.js
         # 引入硬盘录像机需要的配置
