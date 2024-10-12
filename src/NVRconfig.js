@@ -33,7 +33,48 @@ export const PASSWORD = "cumtb617";
  * @type {{"Camera 01": number}}
  */
 export const Name_Channel = {
+  // 本地测试使用
   "Camera 01": 0,
+
+  // 130
+  // name-channel
+  MC_Door_130_10_outer: 0,
+  MC_Door_130_10_inner: 1,
+  MC_Door_130_9_outer: 2,
+  MC_Door_130_9_inner: 3,
+  MC_Door_130_8_outer: 4,
+  MC_Door_130_8_inner: 5,
+  MC_Door_130_7_outer: 6,
+  MC_Door_130_7_inner: 7,
+  MC_Door_130_6_outer: 8,
+  MC_Door_130_6_inner: 9,
+  MC_Door_130_5_outer: 10,
+  MC_Door_130_5_inner: 11,
+  MC_Door_130_4_outer: 12,
+  MC_Door_130_4_inner: 13,
+  MC_Door_130_3_outer: 14,
+  MC_Door_130_3_inner: 15,
+  MC_Door_130_2_outer: 16,
+  MC_Door_130_2_inner: 17,
+
+  // 108
+  // name-channel
+  MC_Door_108_8_outer: 0,
+  MC_Door_108_8_inner: 1,
+  MC_Door_108_7_outer: 2,
+  MC_Door_108_7_inner: 3,
+  MC_Door_108_6_outer: 4,
+  MC_Door_108_6_inner: 5,
+  MC_Door_108_5_outer: 6,
+  MC_Door_108_5_inner: 7,
+  MC_Door_108_4_outer: 8,
+  MC_Door_108_4_inner: 9,
+  MC_Door_108_3_outer: 10,
+  MC_Door_108_3_inner: 11,
+  MC_Door_108_2_outer: 12,
+  MC_Door_108_2_inner: 13,
+  MC_Door_108_1_outer: 14,
+  MC_Door_108_1_inner: 15,
 };
 
 export const CJ108 = "172.16.20.145";

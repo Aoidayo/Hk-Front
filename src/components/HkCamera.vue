@@ -29,8 +29,10 @@ export default {
   props: ["selectedCameraName"],
   mounted() {
     console.log(this.selectedCameraName);
-    // this.destIp = this.getNVRip(this.selectedCameraName);
-    this.selectedChannel = Name_Channel[this.selectedCameraName];
+    // 远程启用
+    // this.getNVRip()
+    this.getNVRchannel();
+
     this.showDVR();
   },
   beforeDestroy() {
@@ -47,16 +49,25 @@ export default {
     };
   },
   methods: {
+    /**
+     * 获取NVR的ip地址
+     * 摄像头的通道本身通过NVRip引入的Name_Channel导入
+     * @param cameraName
+     */
     getNVRip(cameraName) {
       let arr = cameraName.split("_");
       if (arr[0] === "MC") {
-        // MC_Door_108_8
-        if (arr[2] === "108") {
-          this.destIp = CJ108;
-          this.destIpPort = this.destIp + "_" + this.destPort;
-        } else if (arr[2] === "130") {
-          this.destIp = CJ130;
-          this.destIpPort = this.destIp + "_" + this.destPort;
+        if (arr[1] === "Door") {
+          // MC_Door_108_8
+          if (arr[2] === "108") {
+            this.destIp = CJ108;
+            this.destIpPort = this.destIp + "_" + this.destPort;
+          } else if (arr[2] === "130") {
+            this.destIp = CJ130;
+            this.destIpPort = this.destIp + "_" + this.destPort;
+          }
+        } else if (arr[1] === "Out") {
+          //
         }
       } else if (arr[0] === "EV") {
         //EV_Door_3
@@ -68,6 +79,18 @@ export default {
       }
     },
 
+    /**
+     * 获取props传过来的摄像头名字对应通道
+     * 没有 报错
+     */
+    getNVRchannel() {
+      if (Name_Channel[this.selectedCameraName] == null) {
+        this.$message("没有获取到摄像头对应的通道");
+        throw Error("没有获取到摄像头对应的通道");
+      } else {
+        this.selectedChannel = Name_Channel[this.selectedCameraName];
+      }
+    },
     /**
      *  DVR初始化海康插件
      *  登录
