@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     /**
-     * 获取NVR的ip地址
+     * 获取NVR的ip地址,对应username，password
      * 摄像头的通道本身通过NVRip引入的Name_Channel导入
      * @param cameraName
      */
