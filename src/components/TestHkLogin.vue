@@ -22,7 +22,9 @@ export default {
   components: { HkCamera },
   data() {
     return {
-      selectCameraName: "Camera 01",
+      // 本地测试使用Camera 01
+      // 扎矿使用Mc_Door_130_10_outer
+      selectCameraName: "MC_Door_130_10_outer",
       cameraDialogVisible: false,
       isCameraShow: false,
     };

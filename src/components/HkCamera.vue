@@ -21,6 +21,7 @@ import {
   CJ130,
   CJ108,
   EV,
+  CJ_Password,
   EV_Password,
   Name_Channel,
 } from "@/NVRconfig";
@@ -29,8 +30,8 @@ export default {
   props: ["selectedCameraName"],
   mounted() {
     console.log(this.selectedCameraName);
-    // 远程启用
-    // this.getNVRip()
+    // 远程启用下一行
+    this.getNVRip(this.selectedCameraName);
     this.getNVRchannel();
 
     this.showDVR();
@@ -57,6 +58,7 @@ export default {
     getNVRip(cameraName) {
       let arr = cameraName.split("_");
       if (arr[0] === "MC") {
+        this.password = CJ_Password;
         if (arr[1] === "Door") {
           // MC_Door_108_8
           if (arr[2] === "108") {
@@ -89,6 +91,7 @@ export default {
         throw Error("没有获取到摄像头对应的通道");
       } else {
         this.selectedChannel = Name_Channel[this.selectedCameraName];
+        console.log(this.selectedChannel);
       }
     },
     /**
@@ -139,6 +142,11 @@ export default {
             );
           } catch (error) {
             console.error("出现异常", error);
+            // console.error(error.errorCode);
+            if (error.errorCode === 2001) {
+              console.log("已经登录");
+              this.cameraDirectPlay();
+            }
           }
         },
       });
