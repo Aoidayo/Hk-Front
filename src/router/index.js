@@ -6,11 +6,11 @@ import TestHkLogin from "@/components/TestHkLogin.vue";
 const router = new VueRouter({
   routes: [
     {
-      path: "/",
+      path: "/CameraTest",
       component: CameraTest,
     },
     {
-      path: "/TestHkLogin",
+      path: "/",
       component: TestHkLogin,
     },
   ],

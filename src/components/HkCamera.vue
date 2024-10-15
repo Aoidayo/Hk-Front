@@ -24,15 +24,28 @@ import {
   CJ_Password,
   EV_Password,
   Name_Channel,
+  Name_Ip_Dict,
 } from "@/NVRconfig";
 export default {
   name: "HkCamera",
-  props: ["selectedCameraName"],
+  /*
+   * isNvr:bool
+   *   true: 使用nvr连接
+   *   false: 使用ip直连
+   * */
+  props: ["selectedCameraName", "isNvr"],
   mounted() {
     console.log(this.selectedCameraName);
     // 远程启用下一行
-    this.getNVRip(this.selectedCameraName);
-    this.getNVRchannel();
+    if (this.isNvr) {
+      this.getNVRip(this.selectedCameraName);
+      this.getNVRchannel();
+    } else {
+      // ip-port
+      this.getCameraIp(this.selectedCameraName);
+      // 默认通道为0
+      this.selectedChannel = 0;
+    }
 
     this.showDVR();
   },
@@ -94,6 +107,20 @@ export default {
         console.log(this.selectedChannel);
       }
     },
+
+    /**
+     * 获取Camer Ip
+     * 赋值username,password,destIp,destPort,destIpPort
+     * @param cameraName
+     */
+    getCameraIp(cameraName) {
+      let ip = Name_Ip_Dict[cameraName]["ip"];
+      this.destIp = ip;
+      this.destIpPort = `${this.destIp}_${this.destPort}`;
+      this.username = Name_Ip_Dict[cameraName]["username"];
+      this.password = Name_Ip_Dict[cameraName]["password"];
+    },
+
     /**
      *  DVR初始化海康插件
      *  登录
