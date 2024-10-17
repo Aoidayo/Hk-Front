@@ -26,6 +26,8 @@ import {
   Name_Channel,
   Name_Ip_Dict,
 } from "@/NVRconfig";
+// ping
+
 export default {
   name: "HkCamera",
   /*
@@ -145,10 +147,27 @@ export default {
         },
         cbInitPluginComplete: async () => {
           try {
-            await WebVideoCtrl.I_InsertOBJECTPlugin("divPlugin");
+            try {
+              await WebVideoCtrl.I_InsertOBJECTPlugin("divPlugin");
 
-            console.log("初始化成功");
-            console.log(this.destIp, this.destPort, this.destIpPort);
+              console.log("初始化成功");
+              console.log(this.destIp, this.destPort, this.destIpPort);
+            } catch (e) {
+              //
+              alert(
+                "插件初始化失败，请确认是否安装：若未安装，请双击开发包目录里面的HcWebSDKPlugin.exe安装；" +
+                  "若已经安装，请确认安装之后是否启动"
+              );
+              return;
+            }
+
+            const pluginUpdated = await WebVideoCtrl.I_CheckPluginVersion();
+            if (pluginUpdated) {
+              alert(
+                "监测到新的插件版本，请双击开发包目录里面的HcWebSDKPlugin.exe升级"
+              );
+              return;
+            }
 
             // 登录设备
             await WebVideoCtrl.I_Login(
