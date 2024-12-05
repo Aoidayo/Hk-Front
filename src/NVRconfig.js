@@ -85,7 +85,15 @@ export const CJ_Password = "Wxb108@130";
 export const EV_Password = "hik12345+";
 
 // 接入DVRip
-export const OUTER = "192.168.2.186";
+/**
+ * OUTER
+ *  本地：// 本地使用192.168.2.186测试
+ *  远程：// 172.16.20.20
+ * OUTER Password
+ *  本地：cumtb617
+ *  远程：[unkown]
+ */
+export const OUTER = "172.16.20.20";
 export const OUTER_Password = "cumtb617";
 
 // 不加判断了，使用ip直接连
