@@ -34,7 +34,7 @@ export const PASSWORD = "cumtb617";
  */
 export const Name_Channel = {
   // 本地测试使用
-  "Camera 01": 0,
+  // "Camera 01": 0,
 
   // 130
   // name-channel
@@ -83,6 +83,9 @@ export const EV = "172.16.18.2";
 
 export const CJ_Password = "Wxb108@130";
 export const EV_Password = "hik12345+";
+
+export const OUTER = "192.168.2.186";
+export const OUTER_Password = "cumtb617";
 
 // 不加判断了，使用ip直接连
 // port 80

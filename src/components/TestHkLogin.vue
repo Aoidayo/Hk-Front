@@ -20,10 +20,18 @@
       width="80%"
       :before-close="handleCameraDialogClose"
     >
+      <el-button
+        type="primary"
+        @click="changeOldWithNewChannel"
+        style="margin-left: 10px"
+        >切换</el-button
+      >
       <HkCamera
+        ref="hk"
         v-if="isCameraShow"
         :selected-camera-name="selectCameraName"
-        :is-nvr="false"
+        :selectedChannels="selectedChannels"
+        :is-nvr="true"
       >
       </HkCamera>
     </el-dialog>
@@ -42,11 +50,13 @@ export default {
     return {
       // 本地测试使用Camera 01
       // 扎矿使用Mc_Door_130_10_outer
-      selectCameraName: "MC_Door_130_10_outer",
+      selectCameraName: "Mc_Door_130_10_outer",
       cameraDialogVisible: false,
       isCameraShow: false,
       // options 测试用
       cameraNameOptions: [],
+      // 选择通道
+      selectedChannels: [0],
     };
   },
   async mounted() {
@@ -94,6 +104,11 @@ export default {
       // 手动触发beforedestory
       this.isCameraShow = false;
       this.cameraDialogVisible = false;
+    },
+    changeOldWithNewChannel() {
+      console.log(this.$refs.hk);
+      console.log(this.$refs.hk.changeWndShow);
+      this.$refs.hk.changeWndShow(0, 0);
     },
   },
 };

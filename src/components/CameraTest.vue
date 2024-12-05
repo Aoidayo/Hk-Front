@@ -201,7 +201,8 @@ export default {
     cameraDirectPlay() {
       // 实时预览
       WebVideoCtrl.I_StartRealPlay(DestIp_Port, {
-        // iWndIndex:1,
+        // iWndIndex: 1,
+        iWndIndex: 0,
         iChannelID: this.selectedChannel,
         iPort: RTSP_PORT,
         success: () => {
@@ -218,6 +219,7 @@ export default {
     cameraStopPlay() {
       WebVideoCtrl.I_Stop({
         // iWndIndex:winNum,
+        iWndIndex: 0,
         success: function () {
           console.log("停止播放成功");
         },

@@ -21,6 +21,8 @@ import {
   CJ130,
   CJ108,
   EV,
+  OUTER,
+  OUTER_Password,
   CJ_Password,
   EV_Password,
   Name_Channel,
@@ -34,14 +36,37 @@ export default {
    * isNvr:bool
    *   true: 使用nvr连接
    *   false: 使用ip直连
+   * selectedCameraName:str
+   *   只在ip直连时查表使用
+   * selectedChannels:array
+   *    对应通道
    * */
-  props: ["selectedCameraName", "isNvr"],
+  props: ["selectedCameraName", "isNvr", "selectedChannels"],
   mounted() {
     console.log(this.selectedCameraName);
     // 远程启用下一行
     if (this.isNvr) {
-      this.getNVRip(this.selectedCameraName);
-      this.getNVRchannel();
+      // #################################/ past    /#################################
+      // this.getNVRip(this.selectedCameraName);
+      // this.getNVRchannel();
+
+      // #################################/ now: nvr ip    /#################################
+      this.getNVRip();
+      // #################################/ now: channels    /#################################
+      if (!Array.isArray(this.selectedChannels)) {
+        // 不为数组
+        this.$message({
+          message: "没有传入硬盘录像机对应通道",
+          type: "warning",
+        });
+        // error
+        throw new Error("没有传入硬盘录像机对应通道");
+      }
+      // check int
+      // this.selectedChannels = this.selectedChannels.map((num) =>
+      //   Math.floor(num)
+      // );
+      console.log(this.selectedChannels);
     } else {
       // ip-port
       this.getCameraIp(this.selectedCameraName);
@@ -49,7 +74,7 @@ export default {
       this.selectedChannel = 0;
     }
 
-    this.showDVR();
+    this.showNVR();
   },
   beforeDestroy() {
     this.closeCamera();
@@ -62,15 +87,26 @@ export default {
       destIpPort: DestIp_Port,
       username: USERNAME,
       password: PASSWORD,
+      wndId2Channel: {},
     };
   },
   methods: {
     /**
+     * 获取NVR的ip,ip_port,password
+     */
+    getNVRip() {
+      this.password = OUTER_Password;
+      this.destIp = OUTER;
+      this.destIpPort = OUTER + "_" + this.destPort;
+    },
+
+    /**
+     * ！这个不要删，先留着
      * 获取NVR的ip地址,对应username，password
      * 摄像头的通道本身通过NVRip引入的Name_Channel导入
      * @param cameraName
      */
-    getNVRip(cameraName) {
+    getNVRipEdition1(cameraName) {
       let arr = cameraName.split("_");
       if (arr[0] === "MC") {
         this.password = CJ_Password;
@@ -124,7 +160,7 @@ export default {
     },
 
     /**
-     *  DVR初始化海康插件
+     *  NVR初始化海康插件
      *  登录
      *  调用播放函数
      *  I_InitPlugin 初始化插件
@@ -133,7 +169,7 @@ export default {
      *  I_GetAnalogChannelInfo 获取模拟通道
      *
      */
-    showDVR() {
+    showNVR() {
       WebVideoCtrl.I_InitPlugin({
         bWndFull: true,
         iWndowType: 1,
@@ -203,31 +239,101 @@ export default {
      */
     cameraDirectPlay() {
       // 实时预览
-      WebVideoCtrl.I_StartRealPlay(this.destIpPort, {
-        // iWndIndex:1,
-        iChannelID: this.selectedChannel,
-        iPort: RTSP_PORT,
-        success: () => {
-          console.log("预览成功");
-        },
-        error: () => {
-          console.log("预览失败");
-        },
+      if (this.isNvr) {
+        this.changeWndNum("2")
+          .then((res) => {
+            // 最多同时播放四个，故修改为4
+            _ = Math.max(4, this.selectedChannels.length);
+            for (let i = 0; i < _; i++) {
+              WebVideoCtrl.I_StartRealPlay(this.destIpPort, {
+                iWndIndex: i,
+                iChannelID: this.selectedChannels[i],
+                iPort: RTSP_PORT,
+                success: () => {
+                  this.wndId2Channel[i] = this.selectedChannels[i];
+                  // console.log(this.wndId2Channel);
+                  console.log("预览成功");
+                },
+                error: () => {
+                  console.log("预览失败");
+                },
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        WebVideoCtrl.I_StartRealPlay(this.destIpPort, {
+          // iWndIndex:1,
+          iChannelID: this.selectedChannel,
+          iPort: RTSP_PORT,
+          success: () => {
+            console.log("预览成功");
+          },
+          error: () => {
+            console.log("预览失败");
+          },
+        });
+      }
+    },
+
+    /**
+     * 指定wnd播放channel
+     * 使用前提：登录，wnd中stop play
+     * @param wnd
+     * @param channel
+     */
+    cameraDirectPlayByWndAndChannel(wnd, channel) {
+      return new Promise((resolve, reject) => {
+        WebVideoCtrl.I_StartRealPlay(this.destIpPort, {
+          iWndIndex: wnd,
+          iChannelID: channel,
+          iPort: RTSP_PORT,
+          success: () => {
+            console.log("预览成功");
+            resolve();
+          },
+          error: () => {
+            console.log("预览失败");
+            reject();
+          },
+        });
       });
     },
+
     /**
      * 停止播放
+     * 1. wndIndex，停止指定窗口播放的视频
+     * 2. wndIndex没有传递时，ip播放
      */
-    cameraStopPlay() {
-      WebVideoCtrl.I_Stop({
-        // iWndIndex:winNum,
-        success: function () {
-          console.log("停止播放成功");
-        },
-        error: function () {
-          console.log("停止播放失败");
-        },
-      });
+    cameraStopPlay(wndIndex) {
+      if (!wndIndex) {
+        WebVideoCtrl.I_Stop({
+          // iWndIndex:winNum,
+          success: function () {
+            console.log("停止播放成功");
+          },
+          error: function () {
+            console.log("停止播放失败");
+          },
+        });
+      } else {
+        return new Promise((resolve, reject) => {
+          // 必须异步
+          WebVideoCtrl.I_Stop({
+            iWndIndex: wndIndex,
+            success: function () {
+              console.log("停止播放成功");
+              resolve();
+            },
+            error: function () {
+              console.log("停止播放失败");
+              reject("停止播放失败");
+            },
+          });
+        });
+      }
     },
     /**
      * 登出并销毁插件
@@ -330,29 +436,67 @@ export default {
       });
     },
     // 多分屏，此版本不用
+    // 修改为异步
     changeWndNum(iType) {
-      if ("1*2" === iType || "2*1" === iType) {
-        WebVideoCtrl.I_ArrangeWindow(iType).then(
-          () => {
-            console.log("窗口分割成功！");
-          },
-          (oError) => {
-            var szInfo = "窗口分割失败！";
-            console.log(szInfo, oError.errorCode, oError.errorMsg);
-          }
-        );
-      } else {
-        iType = parseInt(iType, 10);
-        WebVideoCtrl.I_ChangeWndNum(iType).then(
-          () => {
-            console.log("窗口分割成功！");
-          },
-          (oError) => {
-            var szInfo = "窗口分割失败！";
-            console.log(szInfo, oError.errorCode, oError.errorMsg);
-          }
-        );
-      }
+      return new Promise((resolve, reject) => {
+        if ("1*2" === iType || "2*1" === iType) {
+          WebVideoCtrl.I_ArrangeWindow(iType).then(
+            () => {
+              console.log("窗口分割成功！");
+              resolve();
+            },
+            (oError) => {
+              var szInfo = "窗口分割失败！";
+              console.log(szInfo, oError.errorCode, oError.errorMsg);
+              reject(oError);
+            }
+          );
+        } else {
+          iType = parseInt(iType, 10);
+          WebVideoCtrl.I_ChangeWndNum(iType).then(
+            () => {
+              console.log("窗口分割成功！");
+              resolve();
+            },
+            (oError) => {
+              var szInfo = "窗口分割失败！";
+              console.log(szInfo, oError.errorCode, oError.errorMsg);
+              reject(oError);
+            }
+          );
+        }
+      });
+    },
+
+    /**
+     *
+     * @param oldChannel
+     * @param newChannel
+     */
+    changeWndShow(oldChannel, newChannel) {
+      let oldWndId =
+        Object.keys(this.wndId2Channel).find(
+          (key) => this.wndId2Channel[key] === oldChannel
+        ) || null;
+      console.log(this.wndId2Channel);
+      console.log("changeWndShow:" + oldWndId);
+
+      this.cameraStopPlay(oldWndId)
+        .then((res) => {
+          console.log("暂停播放成功");
+          this.cameraDirectPlayByWndAndChannel(oldWndId, newChannel)
+            .then((res) => {
+              console.log("切换播放成功");
+            })
+            .catch((err) => {
+              console.log("切换播放失败");
+              console.log(err.message);
+            });
+        })
+        .catch((err) => {
+          console.log("暂停播放失败");
+          console.log(err.message);
+        });
     },
   },
 };
