@@ -84,6 +84,7 @@ export const EV = "172.16.18.2";
 export const CJ_Password = "Wxb108@130";
 export const EV_Password = "hik12345+";
 
+// 接入DVRip
 export const OUTER = "192.168.2.186";
 export const OUTER_Password = "cumtb617";
 
